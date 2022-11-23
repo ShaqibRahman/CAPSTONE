@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">deafen_prototype</string>
+    <string name="deafen">Deafen</string>
+    <string name="mute">Mute</string>
 </resources>
