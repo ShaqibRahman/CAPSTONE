@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Deafen_app.deafen_prototype.iml" filepath="$PROJECT_DIR$/.idea/modules/Deafen_app.deafen_prototype.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Deafen_app.deafen_prototype.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Deafen_app.deafen_prototype.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Deafen_app.deafen_prototype.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Deafen_app.deafen_prototype.app.androidTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Deafen_app.deafen_prototype.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Deafen_app.deafen_prototype.app.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Deafen_app.deafen_prototype.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Deafen_app.deafen_prototype.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/deafen_prototype.iml" filepath="$PROJECT_DIR$/.idea/modules/deafen_prototype.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/deafen_prototype.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/deafen_prototype.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/deafen_prototype.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/deafen_prototype.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/deafen_prototype.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/deafen_prototype.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/deafen_prototype.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/deafen_prototype.app.unitTest.iml" />
     </modules>
   </component>
 </project>
