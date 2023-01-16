@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.content.Intent;
 
 public class LoadingActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
