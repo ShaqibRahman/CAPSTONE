@@ -21,6 +21,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Handler handler=new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
+                if (volume_level > 5){
+                    audioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI); //mutes volume
+                }
+                handler.postDelayed(this,2000);
+            }
+        },20000);
+
         settingsbutton = (ImageButton) findViewById(R.id.Settings);
         settingsbutton.setOnClickListener(new View.OnClickListener() {
             @Override
