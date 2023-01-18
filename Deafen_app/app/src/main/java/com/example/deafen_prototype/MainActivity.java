@@ -1,11 +1,18 @@
 package com.example.deafen_prototype;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static android.content.ContentValues.TAG;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -18,13 +25,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setupPermissions();
 
         Handler handler=new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
 
                 int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
                 if (volume_level > 5){
@@ -43,6 +53,39 @@ public class MainActivity extends AppCompatActivity {
         });
 
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+    }
+
+    private static String TAG = "Permission";
+    private static final int RECORD_REQUEST_CODE = 101;
+
+
+    private void setupPermissions() {
+
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+
+        if(permission != PackageManager.PERMISSION_GRANTED){
+            Log.i(TAG, "Permission to record denied");
+            makeRequest();
+        }
+    }
+    protected void makeRequest() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.RECORD_AUDIO},RECORD_REQUEST_CODE);
+    }
+
+    public void onRequestPermissionResult(int requestCode, String permissions[], int[] grantResults){
+        switch(requestCode) {
+            case RECORD_REQUEST_CODE:
+                if(grantResults.length ==0||grantResults[0]!=PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "Permission has been denied by user");
+                    //TODO create dialog box warning user that the app cannot function without microphone access
+                }
+                else {
+                    Log.i(TAG, "Permission has been granted by user");
+
+            }
+        }
     }
 
     public void Deafen(View view){
