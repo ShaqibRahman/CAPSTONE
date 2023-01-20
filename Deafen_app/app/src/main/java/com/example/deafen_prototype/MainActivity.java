@@ -85,13 +85,16 @@ public class MainActivity extends AppCompatActivity {
         if (state == true) {
             DeafenTrigger();
         } else {
-            MuteTrigger();
+            PauseTrigger();
         }
     }
 
     public void DeafenTrigger(){
-        int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, AudioManager.FLAG_SHOW_UI);  //lowers volume to 1
+
+        Bundle extras = getIntent().getExtras();    //get variables from settings screen
+        int volume_level = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
+        int new_volume = extras.getInt("reduced_vol");
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, new_volume, AudioManager.FLAG_SHOW_UI);  //lowers volume to 1
         Toast.makeText(this,"Deafening", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -103,16 +106,19 @@ public class MainActivity extends AppCompatActivity {
         }, 3000);
     }
 
-    public void MuteTrigger(){
-        int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        audioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI); //mutes volume
-        Toast.makeText(this,"Muting", Toast.LENGTH_SHORT).show();
+    public void PauseTrigger(){
+        Context context = this;
+        // stop music player
+        AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        am.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
+        Toast.makeText(this,"Pausing", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Do something after 3s = 3000ms
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume_level, AudioManager.FLAG_SHOW_UI);
+                //resume music player after 3 seconds
+                am.abandonAudioFocus(null);
             }
         }, 3000);
     }
