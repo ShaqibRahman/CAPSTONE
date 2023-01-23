@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/Title" />
 
     <SeekBar
-        android:id="@+id/seekBar"
+        android:id="@+id/timeBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="335dp"
         android:layout_height="25dp"

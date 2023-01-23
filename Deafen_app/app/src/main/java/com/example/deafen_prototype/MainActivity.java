@@ -95,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
         int volume_level = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
         int new_volume = extras.getInt("reduced_vol");
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, new_volume, AudioManager.FLAG_SHOW_UI);  //lowers volume to 1
+
+        int new_time = extras.getInt("deafen_time"); //gets the time preference of the user from the settings
+
         Toast.makeText(this,"Deafening", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -103,24 +106,28 @@ public class MainActivity extends AppCompatActivity {
                 // Do something after 3s = 3000ms
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume_level, AudioManager.FLAG_SHOW_UI);
             }
-        }, 3000);
+        }, new_time*1000);
     }
 
     public void PauseTrigger(){
+
+        Bundle extras = getIntent().getExtras();    //get variables from settings screen
         Context context = this;
         // stop music player
-        AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-        am.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+        AudioManager pause_play = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        pause_play.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
+        int new_time = extras.getInt("deafen_time"); //gets the time preference of the user from the settings
 
         Toast.makeText(this,"Pausing", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //resume music player after 3 seconds
-                am.abandonAudioFocus(null);
+                //resume music player after a few seconds
+                pause_play.abandonAudioFocus(null);
             }
-        }, 3000);
+        }, new_time*1000);
     }
 
     public void OpenSettings(){

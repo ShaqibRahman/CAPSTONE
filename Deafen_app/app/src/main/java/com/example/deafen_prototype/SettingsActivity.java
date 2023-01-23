@@ -14,8 +14,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     private ImageButton backbutton;
     public SeekBar volume;
+    public SeekBar time;
     private Switch action;
     public int new_volume;
+    public int new_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +34,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         volume = (SeekBar) findViewById(R.id.Deafen_volume);
         volume.setMax(15);
-        volume.setProgress(5);
         volume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progressChangedValue = 5;
 
@@ -48,13 +49,35 @@ public class SettingsActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(SettingsActivity.this, "Seek bar progress is :" + progressChangedValue,
+                Toast.makeText(SettingsActivity.this, "Volume bar progress is :" + progressChangedValue,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        time = (SeekBar) findViewById(R.id.timeBar);
+        time.setMax(10);
+
+        time.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int timeChangedValue = 5;
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                timeChangedValue = progress;
+                new_time = progress;
+
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(SettingsActivity.this, "Time bar progress is :" + timeChangedValue,
                         Toast.LENGTH_SHORT).show();
             }
         });
 
         action = (Switch)  findViewById(R.id.action_switch);
-        action.setChecked(true);
 
     }
 
@@ -62,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("state", CheckAction());
         intent.putExtra("reduced_vol", new_volume);
+        intent.putExtra("deafen_time", new_time);
         startActivity(intent);
     }
 
