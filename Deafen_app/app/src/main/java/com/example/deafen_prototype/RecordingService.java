@@ -8,7 +8,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.IBinder;
-import android.view.View;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,19 +16,21 @@ import androidx.core.app.ActivityCompat;
 
 public class RecordingService extends Service {
 
+    private static int DEAFEN_FLAG = 0;
+
     @Override
     //service starts on this method
     public int onStartCommand(Intent intent, int flags, int startId) {
+        //any start up sequence required goes here
+        //Toast.makeText(this,"Recording Service Initialized", Toast.LENGTH_SHORT).show();
         startRecording();
         return START_STICKY;
     }
 
     @Override
-
     //delete
     public void onDestroy() {
         super.onDestroy();
-
     }
 
     //no idea
@@ -40,9 +42,9 @@ public class RecordingService extends Service {
 
     //AUDIO RECORDING
     //recording parameters
-    private static final int SAMPLE_RATE = 8000;
+    private static final int SAMPLE_RATE = 4000; //this is something to play with to see if increased sample rate really changes functionality at all, or alternatively what the lowest possible rate is
     private static final int CHANNELS = AudioFormat.CHANNEL_IN_MONO;
-    private static final int AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+    private static final int AUDIO_ENCODING = AudioFormat.ENCODING_PCM_8BIT; //PCM 16 bit is the same as wav file, although wav samples at 44.1kHz
 
     private AudioRecord recorder = null;
     private Thread recordingThread = null;
@@ -54,27 +56,26 @@ public class RecordingService extends Service {
     int BytesPerElement = 2;
 
 
-    //gonna want to make the recording a separate <service>
-    public void testAudio(View view) {
-        //Toast.makeText(this,"Testing Recording", Toast.LENGTH_SHORT).show();
-        startRecording();
-    }
-
-
     //maybe need to check and initialize microphones
 
     // do we want to use short or byte??
-    private void processAudio() {
+    private void recordAudio() {
+        //Toast.makeText(this,"processAudio() started", Toast.LENGTH_SHORT).show();
         //Toast.makeText(this, "Audio Detected", Toast.LENGTH_SHORT).show();
         byte data[] = new byte[BufferElements2Rec];
         int x = 0;
+
         while (isRecording) {
             recorder.read(data, 0, BufferElements2Rec);
-            int i = data[100];
-        }
+            processAudio(data);
 
+        }
     }
 
+    private void processAudio(byte[] data){
+        byte max = byteMax(data);
+        DEAFEN_FLAG=max;
+    }
 
     private void startRecording() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -88,22 +89,46 @@ public class RecordingService extends Service {
             return;
         }
         //try changing to MediaRecorder.AudioSource.UNPROCESSED
-        recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNELS, AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
+
+        recorder = new AudioRecord(MediaRecorder.AudioSource.UNPROCESSED, SAMPLE_RATE, CHANNELS, AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
 
         isRecording = true;
         Toast.makeText(this,"Recording Thread Starting", Toast.LENGTH_SHORT).show();
-
+        Log.i("recording","Recording Thread Starting");
         recordingThread = new Thread(new Runnable() {
             public void run() {
+                recorder.startRecording();
 
                 //Log.d("Recording", "Recording thread initiated");
-                processAudio();
+                if(recorder.getRecordingState()==AudioRecord.RECORDSTATE_RECORDING){
+                    Log.i("recording","AudioRecord Recording");
+                    recordAudio();
+
+                }
+                else{
+                    Log.i("recording","AudioRecord not recording");
+                }
+
 
             }
         }, "AudioRecorder Thread");
         recordingThread.start();
 
 
+    }
+
+    private byte byteMax(byte[] data){
+        byte max = 0;
+        for (int i = 0; i < data.length; i++) {
+            if(data[i]>max){
+                max = data[i];
+            }
+        }
+        return max;
+    }
+
+    public static int getDeafenFlag(){
+        return DEAFEN_FLAG;
     }
 }
 

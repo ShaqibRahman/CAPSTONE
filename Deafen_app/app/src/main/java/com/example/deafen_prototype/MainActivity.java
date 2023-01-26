@@ -9,7 +9,10 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,6 +20,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.content.Intent;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,12 +59,19 @@ public class MainActivity extends AppCompatActivity {
 
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
+
     }
 
     private static String TAG = "Permission";
     private static final int RECORD_REQUEST_CODE = 101;
 
 
+
+
+
+
+    //------------------------------------------------------------------------------------------
+    //MICROPHONE PERMISSION HANDLING
     private void setupPermissions() {
 
         int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
@@ -87,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    //-------------------------------------------------------------------------------------------------
+
+    //this method is triggered by the testAudio button
+    public void testAudio(View view) {
+        //Toast.makeText(this,"Testing Recording", Toast.LENGTH_SHORT).show();
+        startService(new Intent(this, RecordingService.class));
+    }
+
 
     public void Deafen(View view){
         int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
@@ -105,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
     public void Mute(View view){
         int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         audioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI); //mutes volume
-        Toast.makeText(this,"Muting", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,String.valueOf(RecordingService.getDeafenFlag()), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"Muting", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -121,3 +142,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 }
+
