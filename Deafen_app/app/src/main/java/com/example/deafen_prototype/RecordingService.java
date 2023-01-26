@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat;
 public class RecordingService extends Service {
 
     private static int DEAFEN_FLAG = 0;
+    private static int THRESHOLD = 127;
 
     @Override
     //service starts on this method
@@ -44,7 +45,7 @@ public class RecordingService extends Service {
     //recording parameters
     private static final int SAMPLE_RATE = 4000; //this is something to play with to see if increased sample rate really changes functionality at all, or alternatively what the lowest possible rate is
     private static final int CHANNELS = AudioFormat.CHANNEL_IN_MONO;
-    private static final int AUDIO_ENCODING = AudioFormat.ENCODING_PCM_8BIT; //PCM 16 bit is the same as wav file, although wav samples at 44.1kHz
+    private static final int AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT; //PCM 16 bit is the same as wav file, although wav samples at 44.1kHz
 
     private AudioRecord recorder = null;
     private Thread recordingThread = null;
@@ -62,7 +63,7 @@ public class RecordingService extends Service {
     private void recordAudio() {
         //Toast.makeText(this,"processAudio() started", Toast.LENGTH_SHORT).show();
         //Toast.makeText(this, "Audio Detected", Toast.LENGTH_SHORT).show();
-        byte data[] = new byte[BufferElements2Rec];
+        short data[] = new short[BufferElements2Rec];
         int x = 0;
 
         while (isRecording) {
@@ -72,9 +73,14 @@ public class RecordingService extends Service {
         }
     }
 
-    private void processAudio(byte[] data){
-        byte max = byteMax(data);
-        DEAFEN_FLAG=max;
+    private void processAudio(short[] data){
+        short max = shortMax(data);
+        if(max>THRESHOLD){
+            DEAFEN_FLAG  = 1;
+        }
+        else{
+            DEAFEN_FLAG = 0;
+        }
     }
 
     private void startRecording() {
@@ -117,8 +123,8 @@ public class RecordingService extends Service {
 
     }
 
-    private byte byteMax(byte[] data){
-        byte max = 0;
+    private short shortMax(short[] data){
+        short max = 0;
         for (int i = 0; i < data.length; i++) {
             if(data[i]>max){
                 max = data[i];

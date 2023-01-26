@@ -58,13 +58,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        Thread deafeningThread = new Thread(new Runnable() {
+            public void run() {
+               while(true){
+                   if(RecordingService.getDeafenFlag()==1) {
+                       Log.i("Recording","Sample value recorded above threshold");
+                   }
+               }
 
 
+            }
+        }, "Deafening Thread");
+        deafeningThread.start();
     }
 
     private static String TAG = "Permission";
     private static final int RECORD_REQUEST_CODE = 101;
-
 
 
 
@@ -122,11 +131,21 @@ public class MainActivity extends AppCompatActivity {
         }, 3000);
     }
 
+    public void Deafen() throws InterruptedException {
+        int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, AudioManager.FLAG_SHOW_UI);  //lowers volume to 1
+        Toast.makeText(this,"Deafening", Toast.LENGTH_SHORT).show();
+        Thread.sleep(3000);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume_level, AudioManager.FLAG_SHOW_UI);
+
+
+    }
+
     public void Mute(View view){
         int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         audioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI); //mutes volume
-        Toast.makeText(this,String.valueOf(RecordingService.getDeafenFlag()), Toast.LENGTH_SHORT).show();
-        //Toast.makeText(this,"Muting", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,String.valueOf(RecordingService.getDeafenFlag()), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"Muting", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -143,3 +162,15 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
+
+
+
+/* --------------Notes------------------------
+Recording functions much better using the 16 bit PCM encoding rather than 8Bit. This will also make it easier to use .wav files
+Currently the flag returns an integer value
+
+TODO
+1. Implement a threshold detection method.
+2. Make the threshold function trigger the deafen method.
+3. Make a stop recording method.
+ */
