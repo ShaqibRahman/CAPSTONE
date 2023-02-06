@@ -75,9 +75,11 @@ public class RecordingService extends Service {
 
     private void processAudio(short[] data){
         short max = shortMax(data);
+
         if(max>THRESHOLD){
             DEAFEN_FLAG  = 1;
         }
+
         else{
             DEAFEN_FLAG = 0;
         }
