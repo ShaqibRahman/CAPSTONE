@@ -1,0 +1,13 @@
+#Tue Jan 17 11:30:03 EST 2023
+path.3=7/classes.dex
+path.2=4/classes.dex
+path.1=0/classes.dex
+path.0=classes.dex
+base.3=C\:\\Users\\Shaqib Rahman\\Documents\\Elec Eng 5th YR\\EE 4OI6\\Code\\CAPSTONE\\Deafen_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
+base.2=C\:\\Users\\Shaqib Rahman\\Documents\\Elec Eng 5th YR\\EE 4OI6\\Code\\CAPSTONE\\Deafen_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
+base.1=C\:\\Users\\Shaqib Rahman\\Documents\\Elec Eng 5th YR\\EE 4OI6\\Code\\CAPSTONE\\Deafen_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.0=C\:\\Users\\Shaqib Rahman\\Documents\\Elec Eng 5th YR\\EE 4OI6\\Code\\CAPSTONE\\Deafen_app\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+renamed.3=classes4.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
