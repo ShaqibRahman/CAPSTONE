@@ -23,6 +23,7 @@ public class RecordingService extends Service {
 
     private static int DEAFEN_FLAG = 0;
     private static int THRESHOLD = 180;
+    private static int user_volume=0;
 
     @Override
     //service starts on this method
@@ -51,7 +52,7 @@ public class RecordingService extends Service {
 
     //AUDIO RECORDING
     //recording parameters
-    private static final int SAMPLE_RATE = 4000; //this is something to play with to see if increased sample rate really changes functionality at all, or alternatively what the lowest possible rate is
+    private static final int SAMPLE_RATE = 40100; //this is something to play with to see if increased sample rate really changes functionality at all, or alternatively what the lowest possible rate is
     private static final int CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT; //PCM 16 bit is the same as wav file, although wav samples at 44.1kHz
 
@@ -106,13 +107,14 @@ public class RecordingService extends Service {
     private void flagZeroAction(){
 
         //this is triggered when the flag goes from 1 to 0
+        user_volume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,0,AudioManager.FLAG_SHOW_UI);
     }
 
     private void flagOneAction(){
 
         //this is triggered when the flag goes from 0 to 1
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,10,AudioManager.FLAG_SHOW_UI);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,user_volume,AudioManager.FLAG_SHOW_UI);
     }
 
 
@@ -130,7 +132,9 @@ public class RecordingService extends Service {
         }
         //try changing to MediaRecorder.AudioSource.UNPROCESSED
 
+        //initialize recorder
         recorder = new AudioRecord(MediaRecorder.AudioSource.UNPROCESSED, SAMPLE_RATE, CHANNELS, AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
+        user_volume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC); //get the current volume
 
         isRecording = true;
         Toast.makeText(this,"Recording Thread Starting", Toast.LENGTH_SHORT).show();
