@@ -38,6 +38,7 @@ public class RecordingService extends Service {
     @Override
     //delete
     public void onDestroy() {
+        recorder.release();
         super.onDestroy();
     }
 
@@ -158,6 +159,7 @@ public class RecordingService extends Service {
 
     private void endRecording(){ //make this better?
         recorder.release();
+
     }
 
     private short shortMax(short[] data){

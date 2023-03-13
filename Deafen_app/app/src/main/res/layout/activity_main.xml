@@ -44,13 +44,13 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="341dp"
-        android:layout_marginEnd="159dp"
+        android:layout_marginEnd="124dp"
         android:onClick="testAudio"
-        android:text="Test Recording"
-        app:layout_constraintEnd_toEndOf="parent" />
-        
-  <Button
+        android:text="Start Recording"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="105dp" />
+
+    <Button
         android:id="@+id/Trigger"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,5 +60,14 @@
         android:text="@string/trigger"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="stopRecording"
+        android:text="Stop Recording"
+        tools:layout_editor_absoluteX="113dp"
+        tools:layout_editor_absoluteY="189dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

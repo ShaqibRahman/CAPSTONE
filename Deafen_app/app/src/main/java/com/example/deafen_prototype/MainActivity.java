@@ -118,7 +118,14 @@ public class MainActivity extends AppCompatActivity {
     //this method is triggered by the testAudio button
     public void testAudio(View view) {
         //Toast.makeText(this,"Testing Recording", Toast.LENGTH_SHORT).show();
+
         startService(new Intent(this, RecordingService.class));
+
+    }
+
+
+    public void stopRecording(View view){
+        stopService(new Intent(this,RecordingService.class));
     }
 
 
@@ -185,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }, new_time*1000);
     }
+
 
     public void PauseTrigger(){
 
