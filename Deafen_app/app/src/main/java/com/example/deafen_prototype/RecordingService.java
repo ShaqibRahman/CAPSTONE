@@ -2,28 +2,35 @@ package com.example.deafen_prototype;
 
 import android.Manifest;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class RecordingService extends Service {
 
     private static int DEAFEN_FLAG = 0;
-    private static int THRESHOLD = 127;
+    private static int THRESHOLD = 180;
 
     @Override
     //service starts on this method
     public int onStartCommand(Intent intent, int flags, int startId) {
         //any start up sequence required goes here
         //Toast.makeText(this,"Recording Service Initialized", Toast.LENGTH_SHORT).show();
+        Log.i("recording","recording service initialized");
+        audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         startRecording();
         return START_STICKY;
     }
@@ -73,17 +80,41 @@ public class RecordingService extends Service {
         }
     }
 
-    private void processAudio(short[] data){
+
+    private void processAudio(short[] data){ //edit this function to change audio functionality
         short max = shortMax(data);
 
-        if(max>THRESHOLD){
-            DEAFEN_FLAG  = 1;
-        }
+        //int old_volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
+        if(max>THRESHOLD){
+            if(DEAFEN_FLAG ==0){
+                DEAFEN_FLAG = 1;
+                flagZeroAction();
+            }
+        }
         else{
-            DEAFEN_FLAG = 0;
+            if(DEAFEN_FLAG==1){
+                DEAFEN_FLAG=0;
+                flagOneAction();
+            }
+
         }
     }
+
+
+    private void flagZeroAction(){
+
+        //this is triggered when the flag goes from 1 to 0
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,0,AudioManager.FLAG_SHOW_UI);
+    }
+
+    private void flagOneAction(){
+
+        //this is triggered when the flag goes from 0 to 1
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,10,AudioManager.FLAG_SHOW_UI);
+    }
+
+
 
     private void startRecording() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -125,6 +156,10 @@ public class RecordingService extends Service {
 
     }
 
+    private void endRecording(){ //make this better?
+        recorder.release();
+    }
+
     private short shortMax(short[] data){
         short max = 0;
         for (int i = 0; i < data.length; i++) {
@@ -138,5 +173,25 @@ public class RecordingService extends Service {
     public static int getDeafenFlag(){
         return DEAFEN_FLAG;
     }
+    AudioManager audioManager;
+
+    public void DeafenTrigger(){
+
+
+        //getMainLooper().prepare();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 3s = 3000ms
+                for(int i = 0;i<100;i++){
+                    Log.i("deafening", "deafening");
+                }
+            }
+        }, 1000);
+    }
+
+
+
 }
 
