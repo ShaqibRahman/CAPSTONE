@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,6 +24,10 @@ public class RecordingService extends Service {
 
     private static int DEAFEN_FLAG = 0;
     private static int THRESHOLD = 180;
+    boolean state;
+    int settings_volume;
+    int settings_time;
+
 
     @Override
     //service starts on this method
@@ -32,6 +37,12 @@ public class RecordingService extends Service {
         Log.i("recording","recording service initialized");
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         startRecording();
+
+        Bundle extras = intent.getExtras();
+        settings_time = extras.getInt("deafen_time"); //gets the time preference of the user from the settings
+        settings_volume = extras.getInt("reduced_vol");
+        state = extras.getBoolean("state");
+
         return START_STICKY;
     }
 
@@ -85,7 +96,7 @@ public class RecordingService extends Service {
     private void processAudio(short[] data){ //edit this function to change audio functionality
         short max = shortMax(data);
 
-        //int old_volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        int volume_level = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         if(max>THRESHOLD){
             if(DEAFEN_FLAG ==0){
@@ -96,9 +107,8 @@ public class RecordingService extends Service {
         else{
             if(DEAFEN_FLAG==1){
                 DEAFEN_FLAG=0;
-                flagOneAction();
+                flagOneAction(volume_level);
             }
-
         }
     }
 
@@ -106,15 +116,70 @@ public class RecordingService extends Service {
     private void flagZeroAction(){
 
         //this is triggered when the flag goes from 1 to 0
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,0,AudioManager.FLAG_SHOW_UI);
+
+        if (state == true) {
+            DeafenTrigger();
+        } else {
+            PauseTrigger();
+        }
     }
 
-    private void flagOneAction(){
+    private void flagOneAction(int volume){
 
         //this is triggered when the flag goes from 0 to 1
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,10,AudioManager.FLAG_SHOW_UI);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 3s = 3000ms
+                if(DEAFEN_FLAG==0){
+
+
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_SHOW_UI);
+                    
+
+                }
+            }
+        }, settings_time*1000);
     }
 
+    public void DeafenTrigger(){
+
+
+        int volume_level = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, settings_volume, AudioManager.FLAG_SHOW_UI);  //lowers volume to 1
+
+        Toast.makeText(this,"Deafening", Toast.LENGTH_SHORT).show();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 3s = 3000ms
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume_level, AudioManager.FLAG_SHOW_UI);
+            }
+        }, settings_time*1000);
+    }
+
+
+    public void PauseTrigger(){
+
+        Context context = this;
+        // stop music player
+        AudioManager pause_play = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        pause_play.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
+        Toast.makeText(this,"Pausing", Toast.LENGTH_SHORT).show();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //resume music player after a few seconds
+                pause_play.abandonAudioFocus(null);
+            }
+        }, settings_time*1000);
+    }
 
 
     private void startRecording() {
@@ -176,23 +241,6 @@ public class RecordingService extends Service {
         return DEAFEN_FLAG;
     }
     AudioManager audioManager;
-
-    public void DeafenTrigger(){
-
-
-        //getMainLooper().prepare();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Do something after 3s = 3000ms
-                for(int i = 0;i<100;i++){
-                    Log.i("deafening", "deafening");
-                }
-            }
-        }, 1000);
-    }
-
 
 
 }

@@ -118,8 +118,16 @@ public class MainActivity extends AppCompatActivity {
     //this method is triggered by the testAudio button
     public void testAudio(View view) {
         //Toast.makeText(this,"Testing Recording", Toast.LENGTH_SHORT).show();
+        Bundle extras = getIntent().getExtras();
+        int settings_time = extras.getInt("deafen_time"); //gets the time preference of the user from the settings
+        int settings_volume = extras.getInt("reduced_vol");
+        boolean state = extras.getBoolean("state");
 
-        startService(new Intent(this, RecordingService.class));
+        Intent intent = new Intent(this, RecordingService.class);
+        intent.putExtra("state", state);
+        intent.putExtra("reduced_vol", settings_volume);
+        intent.putExtra("deafen_time", settings_time);
+        startService(intent);
 
     }
 
