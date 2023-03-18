@@ -22,8 +22,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 public class RecordingService extends Service {
 
     private static int DEAFEN_FLAG = 0;
-    private static int THRESHOLD = 180;
+    private static int THRESHOLD = 200;
     private static int user_volume=0;
+    private static int current_volume = 0;
 
     @Override
     //service starts on this method
@@ -52,7 +53,7 @@ public class RecordingService extends Service {
 
     //AUDIO RECORDING
     //recording parameters
-    private static final int SAMPLE_RATE = 40100; //this is something to play with to see if increased sample rate really changes functionality at all, or alternatively what the lowest possible rate is
+    private static final int SAMPLE_RATE = 8000; //this is something to play with to see if increased sample rate really changes functionality at all, or alternatively what the lowest possible rate is
     private static final int CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT; //PCM 16 bit is the same as wav file, although wav samples at 44.1kHz
 
@@ -74,9 +75,10 @@ public class RecordingService extends Service {
         //Toast.makeText(this, "Audio Detected", Toast.LENGTH_SHORT).show();
         short data[] = new short[BufferElements2Rec];
         int x = 0;
-
+        user_volume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         while (isRecording) {
             recorder.read(data, 0, BufferElements2Rec);
+
             processAudio(data);
 
         }
@@ -91,30 +93,33 @@ public class RecordingService extends Service {
         if(max>THRESHOLD){
             if(DEAFEN_FLAG ==0){
                 DEAFEN_FLAG = 1;
-                flagZeroAction();
+                flagOneAction();
             }
         }
         else{
-            if(DEAFEN_FLAG==1){
-                DEAFEN_FLAG=0;
-                flagOneAction();
-            }
+            DEAFEN_FLAG=0;
+
+            flagZeroAction();//this is outside
 
         }
     }
 
 
     private void flagZeroAction(){
-
+        if(current_volume<user_volume){
+            current_volume++;
+        }
         //this is triggered when the flag goes from 1 to 0
-        user_volume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,0,AudioManager.FLAG_SHOW_UI);
+
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,current_volume,AudioManager.FLAG_SHOW_UI);
     }
 
     private void flagOneAction(){
 
+
+        current_volume=0;
         //this is triggered when the flag goes from 0 to 1
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,user_volume,AudioManager.FLAG_SHOW_UI);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,current_volume,AudioManager.FLAG_SHOW_UI);
     }
 
 
