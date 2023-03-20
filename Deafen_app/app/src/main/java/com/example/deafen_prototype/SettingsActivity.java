@@ -42,6 +42,8 @@ public class SettingsActivity extends AppCompatActivity {
         volume.setMax(15);
         volume.setProgress(sharedPreferences.getInt("volume", 0));
 
+        new_volume = volume.getProgress();
+
         volume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -67,6 +69,8 @@ public class SettingsActivity extends AppCompatActivity {
         time = (SeekBar) findViewById(R.id.timeBar);
         time.setMax(10);
         time.setProgress(sharedPreferences.getInt("time", 0));
+
+        new_time = time.getProgress();
 
         time.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 

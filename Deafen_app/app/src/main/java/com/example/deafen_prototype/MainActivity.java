@@ -39,20 +39,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setupPermissions();
 
-        Handler handler=new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-
-                int volume_level= audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
-                if (volume_level == 15){
-                    audioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI); //mutes volume
-                }
-                handler.postDelayed(this,2000);
-            }
-        },20000);
-
         settingsbutton = (ImageButton) findViewById(R.id.Settings);
         settingsbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();    //get variables from settings screen
         int volume_level = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
         int new_volume = extras.getInt("reduced_vol");
+
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, new_volume, AudioManager.FLAG_SHOW_UI);  //lowers volume to 1
 
         int new_time = extras.getInt("deafen_time"); //gets the time preference of the user from the settings

@@ -24,6 +24,7 @@ public class RecordingService extends Service {
 
     private static int DEAFEN_FLAG = 0;
     private static int THRESHOLD = 180;
+    private Thread flag_thread = null;
     boolean state;
     int settings_volume;
     int settings_time;
@@ -119,7 +120,8 @@ public class RecordingService extends Service {
 
         if (state == true) {
             DeafenTrigger();
-        } else {
+        }
+        else {
             PauseTrigger();
         }
     }
@@ -128,16 +130,22 @@ public class RecordingService extends Service {
 
         //this is triggered when the flag goes from 0 to 1
 
+        flag_thread = new Thread(new Runnable() {
+            public void run() {
+
+
+
+            }
+        }, "Deafen Flag Thread");
+        flag_thread.start();
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
-            @Override
             public void run() {
                 // Do something after 3s = 3000ms
                 if(DEAFEN_FLAG==0){
 
-
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_SHOW_UI);
-                    
 
                 }
             }
@@ -146,20 +154,9 @@ public class RecordingService extends Service {
 
     public void DeafenTrigger(){
 
-
-        int volume_level = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);  //captures volume prior to change
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, settings_volume, AudioManager.FLAG_SHOW_UI);  //lowers volume to 1
 
         Toast.makeText(this,"Deafening", Toast.LENGTH_SHORT).show();
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Do something after 3s = 3000ms
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume_level, AudioManager.FLAG_SHOW_UI);
-            }
-        }, settings_time*1000);
     }
 
 
@@ -171,14 +168,6 @@ public class RecordingService extends Service {
         pause_play.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
         Toast.makeText(this,"Pausing", Toast.LENGTH_SHORT).show();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //resume music player after a few seconds
-                pause_play.abandonAudioFocus(null);
-            }
-        }, settings_time*1000);
     }
 
 
