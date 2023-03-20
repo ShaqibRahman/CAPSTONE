@@ -149,20 +149,21 @@ public class MainActivity extends AppCompatActivity {
         //TODO handle null object without a crash, using the default threshold.
         //TODO if the settings have not been opened, the line below crashes the app
         //TODO this also means that the settings can't be changed while recording.
-        Bundle extras = getIntent().getExtras();
+
+
+        String key = "reduced_vol"; //TODO change the key here when the new slider is added.
+        Intent intent = this.getIntent();
+        int threshold = 180;
+
+        if(intent.hasExtra(key)){
+            Bundle extras = getIntent().getExtras();
+            threshold = 16*extras.getInt(key);
+        }
+
 
         //intent for recording service
         Intent recIntent = new Intent(this, RecordingService.class);
-
-        int defaultThreshold = 180;
-
-        String key = "reduced_vol"; //TODO change the key here when the new slider is added.
-
-
-        recIntent.putExtra("threshold",extras.getInt(key));
-
-
-
+        recIntent.putExtra("threshold",threshold);
 
 
         startService(recIntent);

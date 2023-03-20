@@ -54,7 +54,7 @@ public class RecordingService extends Service {
 
         //this is to protect from the case where settings have not been changed.
         if(!intent.getExtras().equals(null)) {
-            THRESHOLD = 16 * intent.getExtras().getInt("threshold");
+            THRESHOLD = intent.getExtras().getInt("threshold");
         }
         //remains default otherwise
 
