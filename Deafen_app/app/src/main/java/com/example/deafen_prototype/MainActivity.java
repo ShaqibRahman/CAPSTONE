@@ -1,3 +1,30 @@
+/*
+Notes for 2023-03-20
+
+TODO:
+add a slider for the threshold 0-15
+
+
+
+Current Bugs:
+
+Cannot edit volume while recording (logic bug)
+- this might be complicated to change
+
+Must open settings before pressing start recording, or the app crashes (logic bug)
+
+Triggers the flag when start recording is pressed (no idea)
+ */
+
+
+
+
+
+
+
+
+
+
 package com.example.deafen_prototype;
 
 import static android.content.ContentValues.TAG;
@@ -61,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //the following may be unused?
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         Thread deafeningThread = new Thread(new Runnable() {
             public void run() {
@@ -117,9 +145,27 @@ public class MainActivity extends AppCompatActivity {
 
     //this method is triggered by the testAudio button
     public void testAudio(View view) {
-        //Toast.makeText(this,"Testing Recording", Toast.LENGTH_SHORT).show();
 
-        startService(new Intent(this, RecordingService.class));
+        //TODO handle null object without a crash, using the default threshold.
+        //TODO if the settings have not been opened, the line below crashes the app
+        //TODO this also means that the settings can't be changed while recording.
+        Bundle extras = getIntent().getExtras();
+
+        //intent for recording service
+        Intent recIntent = new Intent(this, RecordingService.class);
+
+        int defaultThreshold = 180;
+
+        String key = "reduced_vol"; //TODO change the key here when the new slider is added.
+
+
+        recIntent.putExtra("threshold",extras.getInt(key));
+
+
+
+
+
+        startService(recIntent);
 
     }
 

@@ -21,39 +21,19 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class RecordingService extends Service {
 
-    private static int DEAFEN_FLAG = 0;
+
+
+    //the following parameters can modify the performance of the app
+    private static final int SAMPLE_RATE = 8000;
     private static int THRESHOLD = 200;
+    int BufferElements2Rec = 1024;
+    int BytesPerElement = 2;
+
+    //other necessary initializations
+    private static int DEAFEN_FLAG = 0;
     private static int user_volume=0;
     private static int current_volume = 0;
-
-    @Override
-    //service starts on this method
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        //any start up sequence required goes here
-        //Toast.makeText(this,"Recording Service Initialized", Toast.LENGTH_SHORT).show();
-        Log.i("recording","recording service initialized");
-        audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-        startRecording();
-        return START_STICKY;
-    }
-
-    @Override
-    //delete
-    public void onDestroy() {
-        recorder.release();
-        super.onDestroy();
-    }
-
-    //no idea
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    //AUDIO RECORDING
-    //recording parameters
-    private static final int SAMPLE_RATE = 8000; //this is something to play with to see if increased sample rate really changes functionality at all, or alternatively what the lowest possible rate is
+    AudioManager audioManager;
     private static final int CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT; //PCM 16 bit is the same as wav file, although wav samples at 44.1kHz
 
@@ -63,9 +43,61 @@ public class RecordingService extends Service {
 
     int bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNELS, AUDIO_ENCODING);
 
-    int BufferElements2Rec = 1024;
-    int BytesPerElement = 2;
 
+    @Override
+    //service starts on this method
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Log.i("recording","recording service initialized");
+
+        audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+        //this is to protect from the case where settings have not been changed.
+        if(!intent.getExtras().equals(null)) {
+            THRESHOLD = 16 * intent.getExtras().getInt("threshold");
+        }
+        //remains default otherwise
+
+        Log.i("parameter","threshold = "+ THRESHOLD);
+
+
+        startRecording();
+        return START_STICKY;
+    }
+
+
+    //initializes the recording thread
+    private void startRecording() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            //TODO implement a no permission granted display
+            return;
+        }
+        //try changing to MediaRecorder.AudioSource.UNPROCESSED
+
+        //initialize recorder
+        recorder = new AudioRecord(MediaRecorder.AudioSource.UNPROCESSED, SAMPLE_RATE, CHANNELS, AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
+        user_volume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC); //get the current volume
+
+
+
+        isRecording = true;
+        Toast.makeText(this,"Recording Thread Starting", Toast.LENGTH_SHORT).show();
+        Log.i("recording","Recording Thread Starting");
+        recordingThread = new Thread(new Runnable() {
+            public void run() {
+                recorder.startRecording();
+
+                if(recorder.getRecordingState()==AudioRecord.RECORDSTATE_RECORDING){
+                    Log.i("recording","AudioRecord Recording");
+                    recordAudio();
+                }
+                else{
+                    Log.i("recording","AudioRecord not recording");
+                }
+            }
+        }, "AudioRecorder Thread");
+        recordingThread.start();
+    }
 
     //maybe need to check and initialize microphones
 
@@ -106,7 +138,7 @@ public class RecordingService extends Service {
 
 
     private void flagZeroAction(){
-        if(current_volume<user_volume){
+        if(current_volume<user_volume){ //this creates the gradual increase
             current_volume++;
         }
         //this is triggered when the flag goes from 1 to 0
@@ -122,55 +154,6 @@ public class RecordingService extends Service {
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,current_volume,AudioManager.FLAG_SHOW_UI);
     }
 
-
-
-    private void startRecording() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        //try changing to MediaRecorder.AudioSource.UNPROCESSED
-
-        //initialize recorder
-        recorder = new AudioRecord(MediaRecorder.AudioSource.UNPROCESSED, SAMPLE_RATE, CHANNELS, AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
-        user_volume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC); //get the current volume
-
-        isRecording = true;
-        Toast.makeText(this,"Recording Thread Starting", Toast.LENGTH_SHORT).show();
-        Log.i("recording","Recording Thread Starting");
-        recordingThread = new Thread(new Runnable() {
-            public void run() {
-                recorder.startRecording();
-
-                //Log.d("Recording", "Recording thread initiated");
-                if(recorder.getRecordingState()==AudioRecord.RECORDSTATE_RECORDING){
-                    Log.i("recording","AudioRecord Recording");
-                    recordAudio();
-
-                }
-                else{
-                    Log.i("recording","AudioRecord not recording");
-                }
-
-
-            }
-        }, "AudioRecorder Thread");
-        recordingThread.start();
-
-
-    }
-
-    private void endRecording(){ //make this better?
-        recorder.release();
-
-    }
-
     private short shortMax(short[] data){
         short max = 0;
         for (int i = 0; i < data.length; i++) {
@@ -181,11 +164,39 @@ public class RecordingService extends Service {
         return max;
     }
 
+
+//  Utility functions ------------------------------------------------------------------------------
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    //delete
+    public void onDestroy() {
+        isRecording=false;
+        recorder.release();
+        super.onDestroy();
+    }
+
+    private void endRecording(){ //make this better?
+        isRecording=false;
+        recorder.release();
+
+    }
+
+
+
     public static int getDeafenFlag(){
         return DEAFEN_FLAG;
     }
-    AudioManager audioManager;
 
+
+
+    //this is useless and can be removed
+    /*
     public void DeafenTrigger(){
 
 
@@ -201,8 +212,7 @@ public class RecordingService extends Service {
             }
         }, 1000);
     }
-
-
+    */
 
 }
 
