@@ -1,6 +1,7 @@
 package com.example.deafen_prototype;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,21 +14,45 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import org.tensorflow.lite.Tensor;
+import org.tensorflow.lite.support.audio.TensorAudio;
+import org.tensorflow.lite.support.label.Category;
+import org.tensorflow.lite.task.audio.classifier.AudioClassifier;
+import org.tensorflow.lite.task.audio.classifier.Classifications;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimerTask;
+
 public class RecordingService extends Service {
 
 
 
     //the following parameters can modify the performance of the app
-    private static final int SAMPLE_RATE = 8000;
+    private static  int SAMPLE_RATE = 16000;
     private static int THRESHOLD = 200;
-    int BufferElements2Rec = 1024;
+    int BufferElements2Rec = 2048;
     int BytesPerElement = 2;
+
+
+    //private TensorAudio tensorAudio;
+    private AudioClassifier audioClassifier;
+    private TensorAudio tensorAudio;
+    boolean state;
+    int settings_volume;
+    int settings_time;
+
+
+
 
     //other necessary initializations
     private static int DEAFEN_FLAG = 0;
@@ -60,6 +85,20 @@ public class RecordingService extends Service {
 
         Log.i("parameter","threshold = "+ THRESHOLD);
 
+        String modelPath = "lite-model_yamnet_tflite_1.tflite";
+
+
+        try {
+            audioClassifier = AudioClassifier.createFromFile(this, modelPath);
+            Log.i("debugging","model created");
+        } catch (IOException e) {
+            Log.i("debugging","couldn't make model");
+            e.printStackTrace();
+        }
+
+        TensorAudio.TensorAudioFormat format = audioClassifier.getRequiredTensorAudioFormat();
+
+        tensorAudio = TensorAudio.create(format,BufferElements2Rec);
 
         startRecording();
         return START_STICKY;
@@ -67,6 +106,7 @@ public class RecordingService extends Service {
 
 
     //initializes the recording thread
+    @SuppressLint("MissingPermission")
     private void startRecording() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             //TODO implement a no permission granted display
@@ -110,8 +150,23 @@ public class RecordingService extends Service {
         user_volume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         while (isRecording) {
             recorder.read(data, 0, BufferElements2Rec);
+            //processAudio(data);
 
-            processAudio(data);
+
+            boolean flag = processAudioML(data);
+
+            if(flag){
+                if(DEAFEN_FLAG ==0){
+                    DEAFEN_FLAG = 1;
+                    flagOneAction();
+                }
+            }
+            else{
+                DEAFEN_FLAG=0;
+
+                flagZeroAction();//this is outside
+
+            }
 
         }
     }
@@ -136,6 +191,58 @@ public class RecordingService extends Service {
         }
     }
 
+    //processAudioML(short[] data){ invoke classifier within this and then check if inferences match up , try and implement bool
+    private boolean processAudioML(short[] data) {
+
+        Log.i("debugging","before creating input tensor");
+        tensorAudio = audioClassifier.createInputTensorAudio();
+        tensorAudio.load(data);
+        Log.i("debugging","after creating input tensor");
+        ArrayList<String> model_output = classification(tensorAudio);
+        Log.i("classification", model_output.toString());
+        ArrayList<String> reference_array  = new ArrayList<>();
+        //Sound matching population used in the next step
+        //Cleaner to do one line adds than to do a pan-by-pan one liner
+        reference_array.add("Vehicle");
+        reference_array.add("Emergency Vehicle");
+        reference_array.add("Police car (siren)");
+        reference_array.add("Fire engine, fire truck (siren)");
+        reference_array.add("Sine wave");
+        reference_array.add("Ambulance (siren)");
+        reference_array.add("Vehicle horn, car horn, honking");
+
+
+        for(int i = 0; i < model_output.size(); i++){
+            if(reference_array.contains(model_output.get(i))){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    private ArrayList<String> classification(TensorAudio tensor){
+
+        List<Classifications> classifier  = audioClassifier.classify(tensor);
+        //Running the inferences
+        ArrayList<String> outputFinal = new ArrayList<>();
+        for(Classifications classifications: classifier){
+            for(Category category: classifications.getCategories()){
+                if(category.getScore() > 0.3f){
+                    outputFinal.add(category.getDisplayName());
+                }
+
+            }
+        }
+
+
+        //Iterate through final output, use container.add(outputFinal[i])
+
+
+        return outputFinal;
+
+    }
 
     private void flagZeroAction(){
         if(current_volume<user_volume){ //this creates the gradual increase
