@@ -21,17 +21,20 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+/*
 import org.tensorflow.lite.Tensor;
 import org.tensorflow.lite.support.audio.TensorAudio;
 import org.tensorflow.lite.support.label.Category;
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier;
 import org.tensorflow.lite.task.audio.classifier.Classifications;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimerTask;
+*/
 
 public class RecordingService extends Service {
 
@@ -45,8 +48,8 @@ public class RecordingService extends Service {
 
 
     //private TensorAudio tensorAudio;
-    private AudioClassifier audioClassifier;
-    private TensorAudio tensorAudio;
+    //private AudioClassifier audioClassifier;
+    //private TensorAudio tensorAudio;
     boolean state;
     int settings_volume;
     int settings_time;
@@ -75,6 +78,7 @@ public class RecordingService extends Service {
 
         Log.i("recording","recording service initialized");
 
+
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
         //this is to protect from the case where settings have not been changed.
@@ -85,20 +89,26 @@ public class RecordingService extends Service {
 
         Log.i("parameter","threshold = "+ THRESHOLD);
 
+        /*
         String modelPath = "lite-model_yamnet_tflite_1.tflite";
+        File f = new File(modelPath);
 
 
         try {
-            audioClassifier = AudioClassifier.createFromFile(this, modelPath);
-            Log.i("debugging","model created");
+            audioClassifier = AudioClassifier.createFromFile(f);
         } catch (IOException e) {
-            Log.i("debugging","couldn't make model");
             e.printStackTrace();
         }
+
+        Log.i("debugging","model created");
+
+
 
         TensorAudio.TensorAudioFormat format = audioClassifier.getRequiredTensorAudioFormat();
 
         tensorAudio = TensorAudio.create(format,BufferElements2Rec);
+        */
+
 
         startRecording();
         return START_STICKY;
@@ -150,9 +160,9 @@ public class RecordingService extends Service {
         user_volume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         while (isRecording) {
             recorder.read(data, 0, BufferElements2Rec);
-            //processAudio(data);
+            processAudio(data);
 
-
+            /*
             boolean flag = processAudioML(data);
 
             if(flag){
@@ -167,6 +177,8 @@ public class RecordingService extends Service {
                 flagZeroAction();//this is outside
 
             }
+
+             */
 
         }
     }
@@ -190,7 +202,7 @@ public class RecordingService extends Service {
 
         }
     }
-
+    /*
     //processAudioML(short[] data){ invoke classifier within this and then check if inferences match up , try and implement bool
     private boolean processAudioML(short[] data) {
 
@@ -242,7 +254,7 @@ public class RecordingService extends Service {
 
         return outputFinal;
 
-    }
+    }*/
 
     private void flagZeroAction(){
         if(current_volume<user_volume){ //this creates the gradual increase
