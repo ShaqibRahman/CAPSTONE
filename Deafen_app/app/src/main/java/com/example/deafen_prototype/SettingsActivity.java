@@ -17,9 +17,11 @@ public class SettingsActivity extends AppCompatActivity {
     private ImageButton backbutton;
     public SeekBar volume;
     public SeekBar time;
+    public SeekBar threshold;
     private Switch action;
     public int new_volume;
     public int new_time;
+    public int new_threshold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,32 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Toast.makeText(SettingsActivity.this, "Volume bar progress is :" + new_volume,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        threshold = (SeekBar) findViewById(R.id.threshold_bar);
+        threshold.setMax(15);
+        threshold.setProgress(sharedPreferences.getInt("threshold", 0));
+
+        threshold.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                SharedPreferences.Editor editor=getSharedPreferences("save",MODE_PRIVATE).edit();
+                editor.putInt("threshold", progress);
+                editor.apply();
+                threshold.setProgress(progress);
+                new_threshold = progress;
+
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(SettingsActivity.this, "Threshold bar progress is :" + new_threshold,
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -118,6 +146,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    /*
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
@@ -126,7 +155,7 @@ public class SettingsActivity extends AppCompatActivity {
         outState.putBoolean("state", CheckAction());
         super.onSaveInstanceState(outState);
 
-    }
+    }*/
 
     public void OpenMain(){
 
@@ -134,6 +163,7 @@ public class SettingsActivity extends AppCompatActivity {
         intent.putExtra("state", CheckAction());
         intent.putExtra("reduced_vol", new_volume);
         intent.putExtra("deafen_time", new_time);
+        intent.putExtra("threshold", new_threshold);
         startActivity(intent);
     }
 

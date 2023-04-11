@@ -9,13 +9,13 @@
     <color name="white">#FFFFFFFF</color>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <string name="Action">Action</string>
+    <string name="Deafen">Deafen</string>
     <string name="action">Action</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="app_name">deafen_prototype</string>
-    <string name="deaf">Deafen</string>
     <string name="deafen">Deafen</string>
+    <string name="deafen_volume">Deafen Volume</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="login_failed">"Login failed"</string>
@@ -25,8 +25,10 @@
     <string name="prompt_password">Password</string>
     <string name="setting">TODO</string>
     <string name="settings">Settings</string>
+    <string name="time">Time</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="todo">TODO</string>
+    <string name="trigger">Trigger</string>
     <string name="welcome">"Welcome !"</string>
     <style name="Theme.Deafen_prototype" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         

@@ -151,28 +151,38 @@ public class MainActivity extends AppCompatActivity {
         //TODO this also means that the settings can't be changed while recording.
 
 
-        String key = "reduced_vol"; //TODO change the key here when the new slider is added.
+        String key = "threshold";
         Intent intent = this.getIntent();
         int threshold = 180;
+        int new_volume = 0;
+        int new_time = 0;
+        Boolean state = null;
 
-        if(intent.hasExtra(key)){
+        if (intent.hasExtra(key)) {
             Bundle extras = getIntent().getExtras();
-            threshold = 16*extras.getInt(key);
+            threshold = 16 * extras.getInt(key);
+            new_time = extras.getInt("deafen_time");
+            new_volume = extras.getInt("reduced_vol");
+            state = extras.getBoolean("state");
         }
 
 
         //intent for recording service
         Intent recIntent = new Intent(this, RecordingService.class);
-        recIntent.putExtra("threshold",threshold);
-
+        recIntent.putExtra("threshold", threshold);
+        recIntent.putExtra("setting_volume", new_volume);
+        recIntent.putExtra("setting_time", new_time);
+        recIntent.putExtra("state", state);
 
         startService(recIntent);
-
     }
 
 
     public void stopRecording(View view){
+
         stopService(new Intent(this,RecordingService.class));
+
+        //onDestroy(new Intent(this,RecordingService.class));
     }
 
 

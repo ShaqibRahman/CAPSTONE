@@ -26,7 +26,13 @@ public final class ActivitySettingsBinding implements ViewBinding {
   public final ImageButton BackButton;
 
   @NonNull
-  public final SeekBar PauseMuteDeafenBar;
+  public final SeekBar DeafenVolume;
+
+  @NonNull
+  public final TextView Scale;
+
+  @NonNull
+  public final TextView Time;
 
   @NonNull
   public final TextView Title;
@@ -40,16 +46,32 @@ public final class ActivitySettingsBinding implements ViewBinding {
   @NonNull
   public final TextView deafentext;
 
+  @NonNull
+  public final TextView textView;
+
+  @NonNull
+  public final SeekBar thresholdBar;
+
+  @NonNull
+  public final SeekBar timeBar;
+
   private ActivitySettingsBinding(@NonNull ConstraintLayout rootView,
-      @NonNull ImageButton BackButton, @NonNull SeekBar PauseMuteDeafenBar, @NonNull TextView Title,
-      @NonNull Switch actionSwitch, @NonNull TextView actiontext, @NonNull TextView deafentext) {
+      @NonNull ImageButton BackButton, @NonNull SeekBar DeafenVolume, @NonNull TextView Scale,
+      @NonNull TextView Time, @NonNull TextView Title, @NonNull Switch actionSwitch,
+      @NonNull TextView actiontext, @NonNull TextView deafentext, @NonNull TextView textView,
+      @NonNull SeekBar thresholdBar, @NonNull SeekBar timeBar) {
     this.rootView = rootView;
     this.BackButton = BackButton;
-    this.PauseMuteDeafenBar = PauseMuteDeafenBar;
+    this.DeafenVolume = DeafenVolume;
+    this.Scale = Scale;
+    this.Time = Time;
     this.Title = Title;
     this.actionSwitch = actionSwitch;
     this.actiontext = actiontext;
     this.deafentext = deafentext;
+    this.textView = textView;
+    this.thresholdBar = thresholdBar;
+    this.timeBar = timeBar;
   }
 
   @Override
@@ -85,9 +107,21 @@ public final class ActivitySettingsBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.Pause_Mute_Deafen_bar;
-      SeekBar PauseMuteDeafenBar = ViewBindings.findChildViewById(rootView, id);
-      if (PauseMuteDeafenBar == null) {
+      id = R.id.Deafen_volume;
+      SeekBar DeafenVolume = ViewBindings.findChildViewById(rootView, id);
+      if (DeafenVolume == null) {
+        break missingId;
+      }
+
+      id = R.id.Scale;
+      TextView Scale = ViewBindings.findChildViewById(rootView, id);
+      if (Scale == null) {
+        break missingId;
+      }
+
+      id = R.id.Time;
+      TextView Time = ViewBindings.findChildViewById(rootView, id);
+      if (Time == null) {
         break missingId;
       }
 
@@ -115,8 +149,27 @@ public final class ActivitySettingsBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivitySettingsBinding((ConstraintLayout) rootView, BackButton,
-          PauseMuteDeafenBar, Title, actionSwitch, actiontext, deafentext);
+      id = R.id.textView;
+      TextView textView = ViewBindings.findChildViewById(rootView, id);
+      if (textView == null) {
+        break missingId;
+      }
+
+      id = R.id.threshold_bar;
+      SeekBar thresholdBar = ViewBindings.findChildViewById(rootView, id);
+      if (thresholdBar == null) {
+        break missingId;
+      }
+
+      id = R.id.timeBar;
+      SeekBar timeBar = ViewBindings.findChildViewById(rootView, id);
+      if (timeBar == null) {
+        break missingId;
+      }
+
+      return new ActivitySettingsBinding((ConstraintLayout) rootView, BackButton, DeafenVolume,
+          Scale, Time, Title, actionSwitch, actiontext, deafentext, textView, thresholdBar,
+          timeBar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

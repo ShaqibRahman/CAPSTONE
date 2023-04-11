@@ -14,5 +14,9 @@
     {
         "merged": "com.example.deafen_prototype.app-mergeDebugResources-33:/layout/activity_settings.xml",
         "source": "com.example.deafen_prototype.app-main-36:/layout/activity_settings.xml"
+    },
+    {
+        "merged": "com.example.deafen_prototype.app-mergeDebugResources-33:/layout/activity_main.xml",
+        "source": "com.example.deafen_prototype.app-main-36:/layout/activity_main.xml"
     }
 ]

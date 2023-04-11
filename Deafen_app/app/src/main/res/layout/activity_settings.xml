@@ -33,10 +33,10 @@
         android:id="@+id/Deafen_volume"
         android:layout_width="335dp"
         android:layout_height="25dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="160dp"
-        android:layout_marginEnd="40dp"
         android:max="15"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Title" />
 
     <SeekBar
@@ -44,13 +44,20 @@
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="335dp"
         android:layout_height="25dp"
-        android:layout_marginStart="35dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="25dp"
-        android:max="10"
+        android:max="15"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Time" />
 
-
+    <SeekBar
+        android:id="@+id/threshold_bar"
+        android:layout_width="335dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
         android:id="@+id/Title"
@@ -109,10 +116,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="@string/time"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/threshold_bar" />
 
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="21dp"
+        android:text="Threshold"
         android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"

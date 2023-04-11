@@ -18,6 +18,47 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/back_arrow" />
 
+    <Switch
+        android:id="@+id/action_switch"
+        android:layout_width="115dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="172dp"
+        android:layout_marginTop="28dp"
+        android:text="@string/pause"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Title" />
+
+    <SeekBar
+        android:id="@+id/Deafen_volume"
+        android:layout_width="335dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="160dp"
+        android:max="15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Title" />
+
+    <SeekBar
+        android:id="@+id/timeBar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="335dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="25dp"
+        android:max="15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Time" />
+
+    <SeekBar
+        android:id="@+id/threshold_bar"
+        android:layout_width="335dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
     <TextView
         android:id="@+id/Title"
         android:layout_width="102dp"
@@ -31,27 +72,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SeekBar
-        android:id="@+id/Pause_Mute_Deafen_bar"
-        android:layout_width="288dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="272dp"
-        android:layout_marginEnd="60dp"
-        android:max="2"
-        android:progress="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Title" />
-
-
     <TextView
         android:id="@+id/deafentext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="172dp"
-        android:layout_marginEnd="56dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="52dp"
         android:gravity="center"
-        android:text="@string/deaf"
+        android:text="@string/Deafen"
         android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,22 +89,53 @@
         android:id="@+id/actiontext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="40dp"
         android:gravity="center"
         android:text="@string/action"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/BackButton" />
 
-    <Switch
-        android:id="@+id/action_switch"
-        android:layout_width="109dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="68dp"
-        android:text="Pause"
+    <TextView
+        android:id="@+id/Scale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="@string/deafen_volume"
+        android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Title" />
+        app:layout_constraintTop_toBottomOf="@+id/actiontext" />
+
+    <TextView
+        android:id="@+id/Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="@string/time"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/threshold_bar" />
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="21dp"
+        android:text="Threshold"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Deafen_volume" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

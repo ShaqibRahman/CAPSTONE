@@ -50,11 +50,10 @@ public class RecordingService extends Service {
     //private TensorAudio tensorAudio;
     //private AudioClassifier audioClassifier;
     //private TensorAudio tensorAudio;
-    boolean state;
-    int settings_volume;
-    int settings_time;
 
-
+    boolean state = true;
+    int settings_volume = 0;
+    int settings_time = 0;
 
 
     //other necessary initializations
@@ -84,6 +83,9 @@ public class RecordingService extends Service {
         //this is to protect from the case where settings have not been changed.
         if(!intent.getExtras().equals(null)) {
             THRESHOLD = intent.getExtras().getInt("threshold");
+            state = intent.getExtras().getBoolean("state");
+            settings_time = intent.getExtras().getInt("setting_time");
+            settings_volume = intent.getExtras().getInt("setting_volume");
         }
         //remains default otherwise
 
@@ -267,8 +269,13 @@ public class RecordingService extends Service {
 
     private void flagOneAction(){
 
+        if(settings_volume!=0){
+            current_volume=settings_volume;
+        }
+        else{
+            current_volume=0;
+        }
 
-        current_volume=0;
         //this is triggered when the flag goes from 0 to 1
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,current_volume,AudioManager.FLAG_SHOW_UI);
     }

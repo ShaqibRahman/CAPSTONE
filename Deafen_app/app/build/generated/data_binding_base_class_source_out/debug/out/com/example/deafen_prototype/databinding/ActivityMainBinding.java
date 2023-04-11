@@ -24,17 +24,30 @@ public final class ActivityMainBinding implements ViewBinding {
   public final ImageButton Settings;
 
   @NonNull
+  public final Button Trigger;
+
+  @NonNull
   public final Button button;
 
   @NonNull
   public final Button button2;
 
+  @NonNull
+  public final Button button3;
+
+  @NonNull
+  public final Button button4;
+
   private ActivityMainBinding(@NonNull ConstraintLayout rootView, @NonNull ImageButton Settings,
-      @NonNull Button button, @NonNull Button button2) {
+      @NonNull Button Trigger, @NonNull Button button, @NonNull Button button2,
+      @NonNull Button button3, @NonNull Button button4) {
     this.rootView = rootView;
     this.Settings = Settings;
+    this.Trigger = Trigger;
     this.button = button;
     this.button2 = button2;
+    this.button3 = button3;
+    this.button4 = button4;
   }
 
   @Override
@@ -70,6 +83,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.Trigger;
+      Button Trigger = ViewBindings.findChildViewById(rootView, id);
+      if (Trigger == null) {
+        break missingId;
+      }
+
       id = R.id.button;
       Button button = ViewBindings.findChildViewById(rootView, id);
       if (button == null) {
@@ -82,7 +101,20 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityMainBinding((ConstraintLayout) rootView, Settings, button, button2);
+      id = R.id.button3;
+      Button button3 = ViewBindings.findChildViewById(rootView, id);
+      if (button3 == null) {
+        break missingId;
+      }
+
+      id = R.id.button4;
+      Button button4 = ViewBindings.findChildViewById(rootView, id);
+      if (button4 == null) {
+        break missingId;
+      }
+
+      return new ActivityMainBinding((ConstraintLayout) rootView, Settings, Trigger, button,
+          button2, button3, button4);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
