@@ -13,7 +13,7 @@
         android:layout_marginStart="80dp"
         android:layout_marginBottom="56dp"
         android:onClick="Deafen"
-        android:text="@string/deafen"
+        android:text="Reduce"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

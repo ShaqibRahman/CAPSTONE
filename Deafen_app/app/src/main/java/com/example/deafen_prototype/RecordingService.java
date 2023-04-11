@@ -10,16 +10,12 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /*
 import org.tensorflow.lite.Tensor;
@@ -188,20 +184,33 @@ public class RecordingService extends Service {
 
     private void processAudio(short[] data){ //edit this function to change audio functionality
         short max = shortMax(data);
+        Context context = this;
+        // stop music player
+        AudioManager pause_play = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
         //int old_volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+
 
         if(max>THRESHOLD){
             if(DEAFEN_FLAG ==0){
                 DEAFEN_FLAG = 1;
-                flagOneAction();
+
+                if(state==true){
+                    flagOneDeafenAction();
+                }
+                else{
+                    flagOnePauseAction(pause_play);
+                }
             }
         }
         else{
             DEAFEN_FLAG=0;
-
-            flagZeroAction();//this is outside
-
+            if(state==true){
+                flagZeroDeafenAction();//this is outside
+            }
+            else{
+                flagZeroPauseAction(pause_play);
+            }
         }
     }
     /*
@@ -258,7 +267,7 @@ public class RecordingService extends Service {
 
     }*/
 
-    private void flagZeroAction(){
+    private void flagZeroDeafenAction(){
         if(current_volume<user_volume){ //this creates the gradual increase
             current_volume++;
         }
@@ -267,7 +276,7 @@ public class RecordingService extends Service {
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,current_volume,AudioManager.FLAG_SHOW_UI);
     }
 
-    private void flagOneAction(){
+    private void flagOneDeafenAction(){
 
         if(settings_volume!=0){
             current_volume=settings_volume;
@@ -278,6 +287,18 @@ public class RecordingService extends Service {
 
         //this is triggered when the flag goes from 0 to 1
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,current_volume,AudioManager.FLAG_SHOW_UI);
+    }
+
+    private void flagZeroPauseAction(AudioManager pause_play){
+
+        pause_play.abandonAudioFocus(null);
+
+    }
+
+    private void flagOnePauseAction(AudioManager pause_play){
+
+        pause_play.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
     }
 
     private short shortMax(short[] data){

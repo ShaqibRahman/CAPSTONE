@@ -17,14 +17,6 @@ Triggers the flag when start recording is pressed (no idea)
  */
 
 
-
-
-
-
-
-
-
-
 package com.example.deafen_prototype;
 
 import static android.content.ContentValues.TAG;
@@ -66,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setupPermissions();
 
+        /*
         Handler handler=new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -79,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(this,2000);
             }
         },20000);
+
+         */
 
         settingsbutton = (ImageButton) findViewById(R.id.Settings);
         settingsbutton.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         int threshold = 180;
         int new_volume = 0;
         int new_time = 0;
-        Boolean state = null;
+        boolean state = true;
 
         if (intent.hasExtra(key)) {
             Bundle extras = getIntent().getExtras();
@@ -219,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
     public void Trigger(View view) {
 
         Bundle extras = getIntent().getExtras();
-        Boolean state = null;
+        boolean state = true;
         if (extras != null) {
             state = extras.getBoolean("state");
         }
